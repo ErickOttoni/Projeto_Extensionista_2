@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastrar Serviço — ServiçoSol</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-top">
+      <a href="index.html" class="logo">Serviço<span>Sol</span></a>
+      <button class="hamburger" id="hamburger">&#9776;</button>
+    </div>
+    <div class="navbar-bottom">
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="profissionais.html">Profissionais</a></li>
+        <li><a href="cadastro.html" class="active">Cadastrar-se</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="cadastro-wrapper">
+    <div class="cadastro-header">
+      <span class="badge">✨ Gratuito e sem burocracia</span>
+      <h1>Cadastre seu Serviço</h1>
+      <p>Preencha os dados abaixo e apareça para moradores de Soledade que precisam de você.</p>
+    </div>
+
+    <div class="form-card">
+
+      <!-- FORMULÁRIO -->
+      <div id="formSection">
+        <form id="cadastroForm" onsubmit="submitForm(event)">
+
+          <!-- DADOS PESSOAIS -->
+          <p class="form-section-title">Dados Pessoais</p>
+
+          <div class="form-group">
+            <label for="nome">Nome completo <span class="req">*</span></label>
+            <input type="text" id="nome" placeholder="Ex: Maria da Silva" required/>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cpf">CPF <span class="req">*</span></label>
+              <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" required/>
+            </div>
+            <div class="form-group">
+              <label for="nascimento">Data de nascimento <span class="req">*</span></label>
+              <input type="text" id="nascimento" placeholder="DD/MM/AAAA" maxlength="10" required/>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="whatsapp">WhatsApp <span class="req">*</span></label>
+              <input type="tel" id="whatsapp" placeholder="(54) 99999-0000" required/>
+              <span class="form-note">Será usado pelos moradores para entrar em contato</span>
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail <span class="req">*</span></label>
+              <input type="email" id="email" placeholder="seu@email.com" required/>
+            </div>
+          </div>
+
+          <!-- ENDEREÇO -->
+          <p class="form-section-title">Localização</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bairro">Bairro <span class="req">*</span></label>
+              <input type="text" id="bairro" placeholder="Ex: Centro" required/>
+            </div>
+            <div class="form-group">
+              <label for="cidade">Cidade</label>
+              <input type="text" id="cidade" value="Soledade" readonly style="background:#F5F2EE;color:#999;cursor:not-allowed;"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="endereco">Endereço de atendimento <span class="req">*</span></label>
+            <input type="text" id="endereco" placeholder="Rua, número (ou 'Atendo em domicílio')" required/>
+          </div>
+
+          <!-- SERVIÇO -->
+          <p class="form-section-title">Sobre o seu Serviço</p>
+
+          <div class="form-group">
+            <label for="categoria">Categoria principal <span class="req">*</span></label>
+            <select id="categoria" required>
+              <option value="">Selecione uma categoria...</option>
+              <option value="construcao">🏗️ Construção (Pedreiro, Pintor, Gesseiro...)</option>
+              <option value="eletrica">⚡ Elétrica (Eletricista, Instalações...)</option>
+              <option value="hidraulica">🔧 Hidráulica (Encanador, Bombeiro Hidráulico...)</option>
+              <option value="limpeza">🧹 Limpeza (Diarista, Faxineira, Passadeira...)</option>
+              <option value="beleza">💇 Beleza (Cabeleireiro, Manicure, Estética...)</option>
+              <option value="educacao">📚 Educação (Aulas Particulares, Reforço...)</option>
+              <option value="informatica">💻 Informática (Técnico, Suporte, Manutenção...)</option>
+              <option value="automotivo">🚗 Automotivo (Mecânico, Funileiro, Lavagem...)</option>
+              <option value="saude">🏥 Saúde (Cuidador, Enfermagem, Fisioterapia...)</option>
+              <option value="jardinagem">🌿 Jardinagem (Jardineiro, Paisagismo, Poda...)</option>
+              <option value="alimentos">🍽️ Alimentos (Confeiteiro, Marmita, Buffet...)</option>
+              <option value="outros">➕ Outros serviços</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Serviços que você oferece <span class="req">*</span></label>
+            <div class="checkbox-group" id="checkboxServicos">
+              <!-- gerado via JS conforme categoria -->
+              <p style="color:var(--gray);font-size:0.85rem;grid-column:1/-1;">Selecione uma categoria acima para ver as opções.</p>
+            </div>
+            <input type="text" id="servicoCustom" placeholder="Ou descreva outro serviço aqui" style="margin-top:10px;"/>
+          </div>
+
+          <div class="form-group">
+            <label for="experiencia">Tempo de experiência <span class="req">*</span></label>
+            <select id="experiencia" required>
+              <option value="">Selecione...</option>
+              <option>Menos de 1 ano</option>
+              <option>1 a 2 anos</option>
+              <option>3 a 5 anos</option>
+              <option>6 a 10 anos</option>
+              <option>Mais de 10 anos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="atendimento">Tipo de atendimento <span class="req">*</span></label>
+            <select id="atendimento" required>
+              <option value="">Selecione...</option>
+              <option>Presencial (cliente vem até mim)</option>
+              <option>Domiciliar (vou até o cliente)</option>
+              <option>Residencial</option>
+              <option>Comercial</option>
+              <option>Residencial e Comercial</option>
+              <option>Domiciliar e Presencial</option>
+              <option>Presencial e Online</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao">Descrição do seu trabalho <span class="req">*</span></label>
+            <textarea id="descricao" placeholder="Fale um pouco sobre sua experiência, diferenciais, e o que você faz de melhor..." required></textarea>
+          </div>
+
+          <!-- OPCIONAL -->
+          <p class="form-section-title">Informações Opcionais</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="instagram">Instagram</label>
+              <input type="text" id="instagram" placeholder="@seu_perfil"/>
+            </div>
+            <div class="form-group">
+              <label for="disponibilidade">Disponibilidade</label>
+              <input type="text" id="disponibilidade" placeholder="Ex: Seg a Sex, 8h às 18h"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="formacao">Formação ou certificados</label>
+            <input type="text" id="formacao" placeholder="Ex: Técnico em Elétrica, SENAI 2018"/>
+          </div>
+
+          <!-- LGPD -->
+          <div class="form-group" style="margin-top:24px;">
+            <label class="checkbox-item">
+              <input type="checkbox" id="lgpd" required/>
+              Concordo que meus dados (nome, WhatsApp, e-mail) sejam exibidos publicamente na plataforma ServiçoSol para fins de contato por moradores de Soledade. <span class="req">*</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-submit">✅ Cadastrar meu serviço</button>
+        </form>
+      </div>
+
+      <!-- SUCESSO -->
+      <div class="success-msg" id="successMsg">
+        <div class="success-icon">🎉</div>
+        <h2>Cadastro realizado!</h2>
+        <p>Seu perfil já está visível para os moradores de Soledade. Agora é só esperar os contatos chegarem!</p>
+        <a href="profissionais.html">→ Ver todos os profissionais</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Serviço<span>Sol</span></a>
+        <p>Plataforma comunitária de Soledade/RS.</p>
+      </div>
+      <div class="footer-links">
+        <strong>Navegação</strong>
+        <a href="index.html">Início</a>
+        <a href="profissionais.html">Profissionais</a>
+        <a href="cadastro.html">Cadastrar-se</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 ServiçoSol · Soledade, RS · Projeto Extensionista</p></div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    const servicosPorCat = {
+      construcao: ['Alvenaria / Pedreiro','Pintura','Gesseiro / Drywall','Telhado / Cobertura','Piso e Revestimento','Marcenaria','Serralheria'],
+      eletrica: ['Instalação Elétrica','Troca de Fiação','Chuveiro e Tomadas','Iluminação','Quadro de Luz / Disjuntores','Interfone / Câmeras'],
+      hidraulica: ['Encanamento','Desentupimento','Caixa d\'água','Instalação de torneiras','Aquecedor Solar','Fossas e Tubulação'],
+      limpeza: ['Faxina','Diarista','Passadeira','Limpeza Pós-Obra','Limpeza de Estofados','Limpeza de Vidros'],
+      beleza: ['Corte Masculino','Corte Feminino','Coloração','Escova','Manicure','Pedicure','Sobrancelha','Maquiagem'],
+      educacao: ['Reforço Escolar','Matemática','Português','Inglês','Ciências','História','Pré-Vestibular','Alfabetização'],
+      informatica: ['Formatação','Manutenção de PC / Notebook','Vírus e Lentidão','Instalação de Programas','Configuração de Redes','Aulas de Informática'],
+      automotivo: ['Mecânica Geral','Funilaria','Pintura Automotiva','Lavagem','Troca de Óleo','Instalação de Som'],
+      saude: ['Cuidador de Idosos','Enfermagem Domiciliar','Fisioterapia','Acompanhante Hospitalar','Auxiliar de Saúde'],
+      jardinagem: ['Jardinagem','Poda de Árvores','Paisagismo','Corte de Grama','Controle de Pragas'],
+      alimentos: ['Confeitaria / Bolos','Marmita / Quentinha','Salgados','Buffet','Doces Finos','Comida Congelada'],
+      outros: ['Serviço Geral','Transporte / Frete','Costura e Reformas','Fotografia','Pet Care','Outro']
+    };
+
+    document.getElementById('categoria').addEventListener('change', function() {
+      const cat = this.value;
+      const box = document.getElementById('checkboxServicos');
+      if (!cat || !servicosPorCat[cat]) {
+        box.innerHTML = '<p style="color:var(--gray);font-size:0.85rem;grid-column:1/-1;">Selecione uma categoria acima.</p>';
+        return;
+      }
+      box.innerHTML = servicosPorCat[cat].map(s => `
+        <label class="checkbox-item">
+          <input type="checkbox" name="servico" value="${s}"/> ${s}
+        </label>`).join('');
+    });
+
+    // Máscara CPF
+    document.getElementById('cpf').addEventListener('input', function() {
+      let v = this.value.replace(/\D/g,'');
+      v = v.replace(/(\d{3})(\d)/,'$1.$2');
+      v = v.replace(/(\d{3})(\d)/,'$1.$2');
+      v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+      this.value = v;
+    });
+
+    // Máscara nascimento
+    document.getElementById('nascimento').addEventListener('input', function() {
+      let v = this.value.replace(/\D/g,'');
+      if (v.length > 2) v = v.slice(0,2)+'/'+v.slice(2);
+      if (v.length > 5) v = v.slice(0,5)+'/'+v.slice(5,9);
+      this.value = v;
+    });
+
+    // Máscara WhatsApp
+    document.getElementById('whatsapp').addEventListener('input', function() {
+      let v = this.value.replace(/\D/g,'');
+      if (v.length > 2) v = '('+v.slice(0,2)+') '+v.slice(2);
+      if (v.length > 10) v = v.slice(0,10)+'-'+v.slice(10,14);
+      this.value = v;
+    });
+
+    function submitForm(e) {
+      e.preventDefault();
+      const servicosMarcados = [...document.querySelectorAll('input[name=servico]:checked')].map(c=>c.value);
+      const servicoCustom = document.getElementById('servicoCustom').value.trim();
+      if (servicoCustom) servicosMarcados.push(servicoCustom);
+
+      if (!servicosMarcados.length) {
+        alert('Selecione ao menos um serviço ou descreva o serviço que você oferece.');
+        return;
+      }
+
+      const wppRaw = document.getElementById('whatsapp').value.replace(/\D/g,'');
+      const novo = {
+        id: Date.now(),
+        nome: document.getElementById('nome').value,
+        email: document.getElementById('email').value,
+        whatsapp: '55' + wppRaw,
+        bairro: document.getElementById('bairro').value,
+        endereco: document.getElementById('endereco').value,
+        categoria: document.getElementById('categoria').value,
+        servicos: servicosMarcados,
+        experiencia: document.getElementById('experiencia').value,
+        atendimento: document.getElementById('atendimento').value,
+        descricao: document.getElementById('descricao').value,
+        instagram: document.getElementById('instagram').value,
+        disponibilidade: document.getElementById('disponibilidade').value,
+        formacao: document.getElementById('formacao').value,
+      };
+
+      const lista = getProfissionais();
+      lista.push(novo);
+      saveProfissionais(lista);
+
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  </script>
+</body>
+</html>

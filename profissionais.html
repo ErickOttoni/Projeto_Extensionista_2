@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profissionais — ServiçoSol</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-top">
+      <a href="index.html" class="logo">Serviço<span>Sol</span></a>
+      <button class="hamburger" id="hamburger">&#9776;</button>
+    </div>
+    <div class="navbar-bottom">
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="profissionais.html" class="active">Profissionais</a></li>
+        <li><a href="cadastro.html">Cadastrar-se</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>Profissionais de Soledade</h1>
+    <p>Encontre e contate diretamente quem você precisa</p>
+  </div>
+
+  <div class="filters-bar">
+    <input type="text" class="filter-search" id="filterSearch" placeholder="🔍  Buscar por nome ou serviço..."/>
+    <select class="filter-select" id="filterCat">
+      <option value="">Todas as categorias</option>
+      <option value="construcao">🏗️ Construção</option>
+      <option value="eletrica">⚡ Elétrica</option>
+      <option value="hidraulica">🔧 Hidráulica</option>
+      <option value="limpeza">🧹 Limpeza</option>
+      <option value="beleza">💇 Beleza</option>
+      <option value="educacao">📚 Educação</option>
+      <option value="informatica">💻 Informática</option>
+      <option value="automotivo">🚗 Automotivo</option>
+      <option value="saude">🏥 Saúde</option>
+      <option value="jardinagem">🌿 Jardinagem</option>
+      <option value="alimentos">🍽️ Alimentos</option>
+      <option value="outros">➕ Outros</option>
+    </select>
+    <select class="filter-select" id="filterBairro">
+      <option value="">Todos os bairros</option>
+    </select>
+  </div>
+
+  <div class="profissionais-grid" id="grid">
+    <!-- cards injetados via JS -->
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Serviço<span>Sol</span></a>
+        <p>Plataforma comunitária de Soledade/RS.</p>
+      </div>
+      <div class="footer-links">
+        <strong>Navegação</strong>
+        <a href="index.html">Início</a>
+        <a href="profissionais.html">Profissionais</a>
+        <a href="cadastro.html">Cadastrar-se</a>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2025 ServiçoSol · Soledade, RS · Projeto Extensionista</p></div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    const catLabels = {
+      construcao:'🏗️ Construção', eletrica:'⚡ Elétrica', hidraulica:'🔧 Hidráulica',
+      limpeza:'🧹 Limpeza', beleza:'💇 Beleza', educacao:'📚 Educação',
+      informatica:'💻 Informática', automotivo:'🚗 Automotivo', saude:'🏥 Saúde',
+      jardinagem:'🌿 Jardinagem', alimentos:'🍽️ Alimentos', outros:'➕ Outros'
+    };
+
+    function getInitials(nome) {
+      return nome.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+    }
+
+    function renderCard(p) {
+      const wpp = p.whatsapp ? `https://wa.me/${p.whatsapp.replace(/\D/g,'')}` : null;
+      const servs = Array.isArray(p.servicos) ? p.servicos.join(', ') : (p.servicos || '');
+      return `
+        <div class="prof-card">
+          <div class="prof-avatar">${getInitials(p.nome)}</div>
+          <div class="prof-name">${p.nome}</div>
+          <span class="prof-categoria">${catLabels[p.categoria] || p.categoria}</span>
+          <p class="prof-desc">${p.descricao || ''}</p>
+          <div class="prof-info">
+            ${servs ? `<div class="prof-info-item"><span>🛠️</span> ${servs}</div>` : ''}
+            ${p.bairro ? `<div class="prof-info-item"><span>📍</span> ${p.bairro}, Soledade/RS</div>` : ''}
+            ${p.experiencia ? `<div class="prof-info-item"><span>⏱️</span> ${p.experiencia} de experiência</div>` : ''}
+            ${p.atendimento ? `<div class="prof-info-item"><span>🏠</span> ${p.atendimento}</div>` : ''}
+          </div>
+          <div class="prof-actions">
+            ${wpp ? `<a href="${wpp}" target="_blank" class="btn-wpp">💬 WhatsApp</a>` : ''}
+            ${p.email ? `<a href="mailto:${p.email}" class="btn-email">✉️ E-mail</a>` : ''}
+          </div>
+        </div>`;
+    }
+
+    function render() {
+      const all = getProfissionais();
+      const q = document.getElementById('filterSearch').value.toLowerCase();
+      const cat = document.getElementById('filterCat').value;
+      const bairro = document.getElementById('filterBairro').value;
+      const grid = document.getElementById('grid');
+
+      let filtered = all.filter(p => {
+        const matchQ = !q || p.nome.toLowerCase().includes(q)
+          || (p.descricao||'').toLowerCase().includes(q)
+          || (Array.isArray(p.servicos) ? p.servicos.join(' ') : (p.servicos||'')).toLowerCase().includes(q);
+        const matchCat = !cat || p.categoria === cat;
+        const matchBairro = !bairro || p.bairro === bairro;
+        return matchQ && matchCat && matchBairro;
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>Nenhum profissional encontrado</h3>
+          <p>Tente mudar os filtros ou <a href="cadastro.html" style="color:var(--sol-deep);font-weight:600">cadastre-se como prestador</a>.</p>
+        </div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(renderCard).join('');
+    }
+
+    function populateBairros() {
+      const all = getProfissionais();
+      const bairros = [...new Set(all.map(p=>p.bairro).filter(Boolean))].sort();
+      const sel = document.getElementById('filterBairro');
+      bairros.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        sel.appendChild(opt);
+      });
+    }
+
+    // Lê parâmetros da URL
+    const params = new URLSearchParams(location.search);
+    if (params.get('cat')) document.getElementById('filterCat').value = params.get('cat');
+    if (params.get('q')) document.getElementById('filterSearch').value = params.get('q');
+
+    populateBairros();
+    render();
+
+    document.getElementById('filterSearch').addEventListener('input', render);
+    document.getElementById('filterCat').addEventListener('change', render);
+    document.getElementById('filterBairro').addEventListener('change', render);
+  </script>
+</body>
+</html>
