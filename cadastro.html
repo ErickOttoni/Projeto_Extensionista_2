@@ -111,7 +111,6 @@
           <div class="form-group">
             <label>Serviços que você oferece <span class="req">*</span></label>
             <div class="checkbox-group" id="checkboxServicos">
-              <!-- gerado via JS conforme categoria -->
               <p style="color:var(--gray);font-size:0.85rem;grid-column:1/-1;">Selecione uma categoria acima para ver as opções.</p>
             </div>
             <input type="text" id="servicoCustom" placeholder="Ou descreva outro serviço aqui" style="margin-top:10px;"/>
@@ -175,7 +174,7 @@
             </label>
           </div>
 
-          <button type="submit" class="btn-submit">✅ Cadastrar meu serviço</button>
+          <button type="submit" class="btn-submit" id="btnSubmit">✅ Cadastrar meu serviço</button>
         </form>
       </div>
 
@@ -261,7 +260,7 @@
       this.value = v;
     });
 
-    function submitForm(e) {
+    async function submitForm(e) {
       e.preventDefault();
       const servicosMarcados = [...document.querySelectorAll('input[name=servico]:checked')].map(c=>c.value);
       const servicoCustom = document.getElementById('servicoCustom').value.trim();
@@ -271,6 +270,10 @@
         alert('Selecione ao menos um serviço ou descreva o serviço que você oferece.');
         return;
       }
+
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
 
       const wppRaw = document.getElementById('whatsapp').value.replace(/\D/g,'');
       const novo = {
@@ -290,13 +293,16 @@
         formacao: document.getElementById('formacao').value,
       };
 
-      const lista = getProfissionais();
-      lista.push(novo);
-      saveProfissionais(lista);
-
-      document.getElementById('formSection').style.display = 'none';
-      document.getElementById('successMsg').style.display = 'block';
-      window.scrollTo({top: 0, behavior: 'smooth'});
+      try {
+        await saveProfissional(novo);
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      } catch (err) {
+        alert('Ocorreu um erro ao salvar. Tente novamente.');
+        btn.disabled = false;
+        btn.textContent = '✅ Cadastrar meu serviço';
+      }
     }
   </script>
 </body>

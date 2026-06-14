@@ -50,7 +50,13 @@
     </select>
   </div>
 
-  <div class="profissionais-grid" id="grid">
+  <!-- Estado de carregamento -->
+  <div class="loading-state" id="loadingState">
+    <div class="loading-spinner"></div>
+    <p>Carregando profissionais...</p>
+  </div>
+
+  <div class="profissionais-grid" id="grid" style="display:none;">
     <!-- cards injetados via JS -->
   </div>
 
@@ -79,6 +85,9 @@
       jardinagem:'🌿 Jardinagem', alimentos:'🍽️ Alimentos', outros:'➕ Outros'
     };
 
+    // Cache dos profissionais carregados
+    let todosOsProfissionais = [];
+
     function getInitials(nome) {
       return nome.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
     }
@@ -93,10 +102,10 @@
           <span class="prof-categoria">${catLabels[p.categoria] || p.categoria}</span>
           <p class="prof-desc">${p.descricao || ''}</p>
           <div class="prof-info">
-            ${servs ? `<div class="prof-info-item"><span>🛠️</span> ${servs}</div>` : ''}
-            ${p.bairro ? `<div class="prof-info-item"><span>📍</span> ${p.bairro}, Soledade/RS</div>` : ''}
-            ${p.experiencia ? `<div class="prof-info-item"><span>⏱️</span> ${p.experiencia} de experiência</div>` : ''}
-            ${p.atendimento ? `<div class="prof-info-item"><span>🏠</span> ${p.atendimento}</div>` : ''}
+            ${servs ? `<div class="prof-info-item"><span>🛠️</span> <span class="prof-info-text">${servs}</span></div>` : ''}
+            ${p.bairro ? `<div class="prof-info-item"><span>📍</span> <span class="prof-info-text">${p.bairro}, Soledade/RS</span></div>` : ''}
+            ${p.experiencia ? `<div class="prof-info-item"><span>⏱️</span> <span class="prof-info-text">${p.experiencia} de experiência</span></div>` : ''}
+            ${p.atendimento ? `<div class="prof-info-item"><span>🏠</span> <span class="prof-info-text">${p.atendimento}</span></div>` : ''}
           </div>
           <div class="prof-actions">
             ${wpp ? `<a href="${wpp}" target="_blank" class="btn-wpp">💬 WhatsApp</a>` : ''}
@@ -106,13 +115,12 @@
     }
 
     function render() {
-      const all = getProfissionais();
       const q = document.getElementById('filterSearch').value.toLowerCase();
       const cat = document.getElementById('filterCat').value;
       const bairro = document.getElementById('filterBairro').value;
       const grid = document.getElementById('grid');
 
-      let filtered = all.filter(p => {
+      let filtered = todosOsProfissionais.filter(p => {
         const matchQ = !q || p.nome.toLowerCase().includes(q)
           || (p.descricao||'').toLowerCase().includes(q)
           || (Array.isArray(p.servicos) ? p.servicos.join(' ') : (p.servicos||'')).toLowerCase().includes(q);
@@ -133,9 +141,10 @@
     }
 
     function populateBairros() {
-      const all = getProfissionais();
-      const bairros = [...new Set(all.map(p=>p.bairro).filter(Boolean))].sort();
+      const bairros = [...new Set(todosOsProfissionais.map(p=>p.bairro).filter(Boolean))].sort();
       const sel = document.getElementById('filterBairro');
+      // Remove opções antigas (menos a primeira "Todos os bairros")
+      while (sel.options.length > 1) sel.remove(1);
       bairros.forEach(b => {
         const opt = document.createElement('option');
         opt.value = b; opt.textContent = b;
@@ -143,13 +152,24 @@
       });
     }
 
-    // Lê parâmetros da URL
-    const params = new URLSearchParams(location.search);
-    if (params.get('cat')) document.getElementById('filterCat').value = params.get('cat');
-    if (params.get('q')) document.getElementById('filterSearch').value = params.get('q');
+    async function init() {
+      // Lê parâmetros da URL antes de carregar
+      const params = new URLSearchParams(location.search);
+      if (params.get('cat')) document.getElementById('filterCat').value = params.get('cat');
+      if (params.get('q')) document.getElementById('filterSearch').value = params.get('q');
 
-    populateBairros();
-    render();
+      // Carrega profissionais do banco compartilhado
+      todosOsProfissionais = await getProfissionais();
+
+      // Esconde loading, mostra grid
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('grid').style.display = 'grid';
+
+      populateBairros();
+      render();
+    }
+
+    init();
 
     document.getElementById('filterSearch').addEventListener('input', render);
     document.getElementById('filterCat').addEventListener('change', render);
