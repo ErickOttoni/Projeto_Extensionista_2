@@ -27,14 +27,32 @@ document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
 // === Banco de dados: Google Sheets via Apps Script ===
 
 async function getProfissionais() {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'COLE_SUA_URL_AQUI') {
-    // Fallback para localStorage enquanto não configurar o Apps Script
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwJgkx47qfXLi51fqmD0ganU26_LaewHvM70pTPLfuYSfqtd7IcBt6FJmHmEWsePkxZ/exec') {
     return JSON.parse(localStorage.getItem('profissionais') || '[]');
   }
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?action=get');
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    const res = await fetch(APPS_SCRIPT_URL + '?action=get', {
+      method: 'GET',
+      mode: 'cors',
+      redirect: 'follow',        // ← Google redireciona a URL publicada
+    });
+
+    if (!res.ok) {
+      console.error('HTTP erro:', res.status, res.statusText);
+      return [];
+    }
+
+    const text = await res.text();          // lê como texto primeiro
+    console.log('RAW response:', text);     // mostra no console para debug
+
+    const data = JSON.parse(text);          // aí converte
+
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.profissionais)) return data.profissionais;
+
+    console.warn('Formato inesperado:', data);
+    return [];
   } catch (e) {
     console.error('Erro ao buscar profissionais:', e);
     return [];
