@@ -93,7 +93,7 @@
     }
 
     function renderCard(p) {
-      const wpp = p.whatsapp ? `https://wa.me/${p.whatsapp.replace(/\D/g,'')}` : null;
+      const wpp = p.whatsapp ? `https://wa.me/${String(p.whatsapp).replace(/\D/g,'')}` : null;
       const servs = Array.isArray(p.servicos) ? p.servicos.join(', ') : (p.servicos || '');
       return `
         <div class="prof-card">
